@@ -36,6 +36,80 @@ class _FirebaseDemoState extends State<FirebaseDemo> {
   final CollectionReference itemCollectionDB = FirebaseFirestore.instance.collection('ITEMS');
   List<String> itemList = [];
 
+  Widget nameTextFieldWidget() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 1.7,
+      child: TextField(
+        controller: _newItemTextField,
+        style: TextStyle(fontSize: 22, color: Colors.black),
+        decoration: InputDecoration(
+          hintText: "Item Name",
+          hintStyle: TextStyle(fontSize: 22, color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  Widget addButtonWidget() {
+    return SizedBox(
+      child: ElevatedButton(
+          onPressed: () async {
+            //setState(() {
+            //itemList.add(_newItemTextField.text);
+            //_newItemTextField.clear();
+            await itemCollectionDB.add({'item_name': _newItemTextField.text}).then((value) => _newItemTextField.clear());
+            //});
+          },
+          child: Text(
+            'Add Data',
+            style: TextStyle(fontSize: 20),
+          )),
+    );
+  }
+
+  Widget itemInputWidget() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        nameTextFieldWidget(),
+        SizedBox(width: 10,),
+        addButtonWidget(),
+      ],
+    );
+  }
+
+  Widget itemTileWidget(snapshot, position) {
+    return ListTile(
+      leading: Icon(Icons.check_box),
+      title: Text(snapshot.data.docs[position]['item_name']),
+      onTap: () {
+        setState(() {
+          print("You tapped at postion =  $position");
+          String itemId = snapshot.data.docs[position].id;
+          itemCollectionDB.doc(itemId).delete();
+        });
+      },
+    );
+  }
+
+  Widget itemListWidget() {
+    return Expanded(
+        child:
+        StreamBuilder(stream: itemCollectionDB.snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              return ListView.builder(
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    return Card(
+                        child: itemTileWidget(snapshot,position)
+                    );
+                  }
+              );
+            })
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,65 +119,9 @@ class _FirebaseDemoState extends State<FirebaseDemo> {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
-            Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 1.7,
-                child: TextField(
-                  controller: _newItemTextField,
-                  style: TextStyle(fontSize: 22, color: Colors.black),
-                  decoration: InputDecoration(
-                    hintText: "Name",
-                    hintStyle: TextStyle(fontSize: 22, color: Colors.black),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                child: ElevatedButton(
-                    onPressed: () async {
-                      //setState(() {
-                        //itemList.add(_newItemTextField.text);
-                        //_newItemTextField.clear();
-                        await itemCollectionDB.add({'item_name': _newItemTextField.text}).then((value) => _newItemTextField.clear());
-                      //});
-                    },
-                    child: Text(
-                      'Add Data',
-                      style: TextStyle(fontSize: 20),
-                    )),
-              ),
-            ],
-          ),
+              itemInputWidget(),
               SizedBox(height: 40,),
-              Expanded(
-                child:
-                StreamBuilder(stream: itemCollectionDB.snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    return ListView.builder(
-                        itemCount: snapshot.data.docs.length,
-                        itemBuilder: (BuildContext context, int position) {
-                          return Card(
-                              child: ListTile(
-                                leading: Icon(Icons.check_box),
-                                title: Text(snapshot.data.docs[position]['item_name']),
-                                onTap: () {
-                                  setState(() {
-                                    print("You tapped at postion =  $position");
-                                    String itemId = snapshot.data.docs[position].id;
-                                    itemCollectionDB.doc(itemId).delete();
-                                  });
-                                },
-                              )
-                          );
-                        }
-                    );
-                  })
-              ),
+              itemListWidget(),
             ],
           ),
         ),
