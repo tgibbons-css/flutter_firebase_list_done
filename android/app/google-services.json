@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "145787237853",
+    "project_id": "generalcss2021",
+    "storage_bucket": "generalcss2021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145787237853:android:f398591c46d6aca24db234",
+        "android_client_info": {
+          "package_name": "css.flutter_firebase_list"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145787237853-5ovd3abgg1n3t6um2ecgtejgn1l4it4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC4sMuAYy__8sUahwF5IS_NHbaAqJbVhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145787237853-5ovd3abgg1n3t6um2ecgtejgn1l4it4k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
